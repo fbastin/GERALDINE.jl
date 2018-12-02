@@ -16,6 +16,8 @@ I: Information
 N: Non Linear
 
 E: Estimated
+
+Just a funny little optimisation package.
 """
 module GERALDINE
 
