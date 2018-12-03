@@ -18,16 +18,18 @@ function btr_BFGS(f::Function, g!::Function, H!::Function, x0::Vector;
     end
     
     while !Stop_optimize(fx, state.g, state.iter, nmax = nmax)
+        
         if verbose
-            println(round.(state.x, 2))
+            println(round.(state.x, digits = 3))
         end
         state.step = TruncatedCG(state, H)
         state.xcand = state.x+state.step
         fcand = f(state.xcand)
-        state.ρ = (fcand-fx)/(model(state.step, state.g, H))
-        g!(state.xcand, gcand)
         
-        y = gcand-state.g
+        state.ρ = -(fx-fcand)/(model(state.step, state.g, H))
+        
+        g!(state.xcand, gcand)
+        y = gcand - state.g
         H = H!(H, y, state.step)
         
         if acceptCandidate!(state, b)
@@ -43,10 +45,10 @@ end
 
 function BFGS!(H::Matrix, y::Vector, s::Vector)
     Bs = H*s
-    H[:,:] += y*y'/(y'*s)+Bs*Bs'/(s'*Bs)
+    H[:, :] += (y*y')/(y'*s) - (Bs*Bs')/(s'*Bs)
 end
 
-function OPTIM_btr_BFGS(f::Function, g!::Function, H!::Function, x0::Vector; verbose::Bool = true, nmax::Int64 = 1000)
-    x, it = btr_BFGS(f, g!, BFGS!, x0, vervose = verbose, nmax = nmax)
+function OPTIM_btr_BFGS(f::Function, g!::Function, x0::Vector; verbose::Bool = true, nmax::Int64 = 1000)
+    x, it = btr_BFGS(f, g!, BFGS!, x0, verbose = verbose, nmax = nmax)
     return x
 end

@@ -11,8 +11,8 @@ mutable struct BFGS <: Approx
     function BFGS(n::Int64, m::Int64 = 0) #m is a dumy parameter
         b = new()
         b.dim = n
-        b.H = eye(n)
-        b.inv = eye(n)
+        b.H = Array{Float64, 2}(I, n, n)
+        b.inv = Array{Float64, 2}(I, n, n)
         return b
     end
 end
@@ -24,8 +24,8 @@ function update!(b::BFGS, y::Vector, s::Vector)
     Bs = b.H*s
     b.H = b.H-(Bs*Bs')/dot(s, Bs)+(y*y')/dot(s, y)
     
-    term_1 = eye(b.dim) - (s*y')/(y'*s)
-    term_2 = eye(b.dim) - (y*s')/(y'*s)
+    term_1 = Array{Float64, 2}(I, b.dim, b.dim)- (s*y')/(y'*s)
+    term_2 = Array{Float64, 2}(I, b.dim, b.dim) - (y*s')/(y'*s)
     b.inv = term_1*b.inv*term_2+(s*s')/(y'*s)
 end
 
@@ -47,7 +47,7 @@ function Arimijo(f::Function, x::Vector, d::Vector, grad::Vector, β::Float64 = 
 end
 
 function optimize(x_0::Vector, f::Function, ∇f!::Function; m::Int64 = 15, 
-        nmax::Int64 = 500, ϵ::Float64 = 1e-4, Bfgs = L_BFGS, verbose::Bool = false)
+        nmax::Int64 = 500, ϵ::Float64 = 1e-4, Bfgs = BFGS, verbose::Bool = false)
     grad = zeros(length(x_0))
     x = x_0
     ∇f!(x, grad)
@@ -88,6 +88,6 @@ end
 function OPTIM_BFGS(f::Function, ∇f!::Function; x0::Vector, nmax::Int64 = 500, 
         ϵ::Float64 = 1e-4, verbose::Bool = false)
     
-    return optimize(x_0::Vector, f::Function, ∇f!::Function, x = x0, nmax = nmax, ϵ = ϵ, verbose = verbose)[1]
+    return optimize(x0, f, ∇f!, nmax = nmax, verbose = verbose)[1]
     
 end

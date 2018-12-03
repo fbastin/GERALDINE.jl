@@ -20,8 +20,7 @@ function AG(x0::Vector, f::Function, ∇f!::Function,
         
         ∇f!(x_md, ∇f_md)
         
-        if Stop_optimize(x_md, f(x_md), ∇f_md, 1.0, ones(length(x_md)), k, 
-                tol = ϵ, nmax = nmax)
+        if Stop_optimize(f(x_md), ∇f_md, k, nmax = nmax)
             println("break by norm at ", k)
             break
         end

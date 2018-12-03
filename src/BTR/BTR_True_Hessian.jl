@@ -1,5 +1,5 @@
 function btr_TH(f::Function, g!::Function, H!::Function, x0::Vector; 
-        state::BTRState = BTRState(), vervose::Bool = true, nmax::Int64 = 1000)
+        state::BTRState = BTRState(), verbose::Bool = true, nmax::Int64 = 1000)
     b = BTRDefaults()
     state.iter = 0
     state.x = x0
@@ -20,7 +20,7 @@ function btr_TH(f::Function, g!::Function, H!::Function, x0::Vector;
     while !Stop_optimize(fx, state.g, state.iter, nmax = nmax)
         
         if verbose
-            println(round.(state.x, 2))
+            println(round.(state.x, digits = 2))
         end
         
         state.step = TruncatedCG(state, H)
@@ -41,6 +41,6 @@ function btr_TH(f::Function, g!::Function, H!::Function, x0::Vector;
 end
 
 function OPTIM_btr_TH(f::Function, g!::Function, H!::Function, x0::Vector; verbose::Bool = true, nmax::Int64 = 1000)
-    x, it = btr_TH(f, g!, H!, x0, vervose = verbose, nmax = nmax)
+    x, it = btr_TH(f, g!, H!, x0, verbose = verbose, nmax = nmax)
     return x
 end

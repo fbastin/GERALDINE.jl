@@ -25,7 +25,7 @@ function RSAG(x0::Vector, f::Function, g!::Function, batch_test, logf::Function,
     return Xk, Xmd, Xag
 end
 
-function PTIM_AGRESSIVE_RSAG(f::Function, ∇f!::Function , batch, log_f::Function; x0::Vector, L::Float64, nmax::Int64 = 500, 
+function OPTIM_AGRESSIVE_RSAG(f::Function, ∇f!::Function , batch, log_f::Function; x0::Vector, L::Float64, nmax::Int64 = 500, 
         ϵ::Float64 = 1e-4, verbose::Bool = false, n_test::Int64 = 500, n_optim::Int64 = 100)
     
     batch_test = copy(batch)
