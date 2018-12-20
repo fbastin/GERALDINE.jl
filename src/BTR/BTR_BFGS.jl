@@ -4,8 +4,7 @@ end
 
 function btr(f::Function, g!::Function, state::BTRState{BFGS_Matrix}, x0::Vector; 
         verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64, 
-        accumulate!::Function = (state::BTRState{BFGS_Matrix}, acc::Array) -> nothing,
-        accumulator::Array = [])
+        accumulate!::Function, accumulator::Array)
     n = length(x0)
     b = BTRDefaults()
     state.fx = f(x0)
@@ -19,7 +18,7 @@ function btr(f::Function, g!::Function, state::BTRState{BFGS_Matrix}, x0::Vector
     end
     
     while !Stop_optimize(state.fx, state.g, state.iter, nmax = nmax)
-        accumulate!(accumulator)
+        accumulate!(state, accumulator)
         if verbose
             println(state)
         end
@@ -68,11 +67,16 @@ end
 
 function OPTIM_btr_BFGS(f::Function, g!::Function, x0::Vector; verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64)
     H = Array{Float64, 2}(I, length(x0), length(x0))
+    
+    function accumulate!(state::BTRState{BFGS_Matrix}, acc::Vector)
+        push!(acc, state.fx)
+    end
+    accumulator = []
     state = BTRState(BFGS_Matrix(H))
     state.x = x0
     state.iter = 0
     state.g = zeros(length(x0))
     state = btr(f, g!, state, x0,
-        verbose = verbose, nmax = nmax, epsilon = epsilon)
+        verbose = verbose, nmax = nmax, epsilon = epsilon, accumulate! = accumulate!, accumulator = accumulator)
     return x
 end
