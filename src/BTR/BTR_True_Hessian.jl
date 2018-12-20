@@ -1,4 +1,4 @@
-function btr(f::Function, g!::Function, H!::Function, state::BTRState{Matrix}; 
+function btr(f::Function, g!::Function, H!::Function, state::BTRState{Matrix}, x0::Vector; 
         verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64 = 1e-6, 
         accumulate!::Function = (state, acc) -> nothing, accumulator = [])
     b = BTRDefaults()
@@ -44,7 +44,7 @@ function OPTIM_btr_TH(f::Function, g!::Function, H!::Function, x0::Vector; verbo
     state.iter = 0
     state.g = zeros(length(x0))
     
-    state, accumulator =  btr(f, g!, H!, state, 
+    state, accumulator =  btr(f, g!, H!, state, x0,
         verbose = verbose, nmax = nmax, epsilon = epsilon, 
         acc!)
     return state, accumulator
