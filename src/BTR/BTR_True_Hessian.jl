@@ -54,6 +54,6 @@ function OPTIM_btr_TH(f::Function, g!::Function, H!::Function,
         
     
     state, accumulator = btr(f, g!, H!, state, x0, 
-                verbose = verbose, nmax = nmax, epsilon = epsilon, accumulate! = accumulate!, accumulator)
+                verbose = verbose, nmax = nmax, epsilon = epsilon, accumulate! = accumulate!, accumulator = accumulator)
     return state, accumulator
 end
