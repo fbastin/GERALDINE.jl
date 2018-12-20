@@ -44,7 +44,7 @@ end
 
 function BFGS!(bfgs::BFGS_Matrix{Matrix}, y::Vector, s::Vector)
     Bs = bfgs.H*s
-    H[:, :] += (y*y')/(y'*s) - (Bs*Bs')/(s'*Bs)
+    bfgs.H[:, :] += (y*y')/(y'*s) - (Bs*Bs')/(s'*Bs)
 end
 
 
