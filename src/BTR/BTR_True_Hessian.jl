@@ -37,7 +37,7 @@ end
 
 function OPTIM_btr_TH(f::Function, g!::Function, H!::Function, x0::Vector; verbose::Bool = true, 
                 nmax::Int64 = 1000, acc!::Function = (state, acc) -> nothing, 
-                H = Array{Float64, 2}(I, length(x0), length(x0)), ϵ::Float64 = 1e-4)
+                H = Array{Float64, 2}(I, length(x0), length(x0)), epsilon::Float64 = 1e-4)
     
     state = BTRState(H)
     state.x = x0
@@ -45,7 +45,7 @@ function OPTIM_btr_TH(f::Function, g!::Function, H!::Function, x0::Vector; verbo
     state.g = zeros(length(x0))
     
     state, accumulator =  btr(f, g!, H!, state, 
-        verbose = verbose, nmax = nmax, epsilon = ϵ, 
+        verbose = verbose, nmax = nmax, epsilon = epsilon, 
         acc!)
     return state, accumulator
 end
