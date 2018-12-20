@@ -17,7 +17,7 @@ function btr(f::Function, g!::Function, state::BTRState{BFGS_Matrix}, x0::Vector
         return dot(s, g)+0.5*dot(s, H*s)
     end
     
-    while !Stop_optimize(fx, state.g, state.iter, nmax = nmax)
+    while !Stop_optimize(state.fx, state.g, state.iter, nmax = nmax)
         accumulate!(accumulator)
         if verbose
             println(state)
@@ -26,7 +26,7 @@ function btr(f::Function, g!::Function, state::BTRState{BFGS_Matrix}, x0::Vector
         state.xcand = state.x+state.step
         fcand = f(state.xcand)
         
-        state.ρ = -(fx-fcand)/(dot(state.step, state.g)+0.5*dot(state.step, state.H*state.step))
+        state.ρ = -(state.fx-fcand)/(dot(state.step, state.g)+0.5*dot(state.step, state.H*state.step))
         
         g!(state.xcand, gcand)
         y = gcand - state.g
