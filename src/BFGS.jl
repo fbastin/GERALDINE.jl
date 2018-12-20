@@ -86,8 +86,8 @@ end
 
 
 function OPTIM_BFGS(f::Function, ∇f!::Function; x0::Vector, nmax::Int64 = 500, 
-        ϵ::Float64 = 1e-4, verbose::Bool = false)
+        epsilon::Float64 = 1e-4, verbose::Bool = false)
     
-    return optimize(x0, f, ∇f!, nmax = nmax, verbose = verbose, epsilon = ϵ)
+    return optimize(x0, f, ∇f!, nmax = nmax, verbose = verbose, epsilon = epsilon)
     
 end
