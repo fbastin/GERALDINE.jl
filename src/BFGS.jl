@@ -47,7 +47,7 @@ function Arimijo(f::Function, x::Vector, d::Vector, grad::Vector, β::Float64 = 
 end
 
 function optimize(x_0::Vector, f::Function, ∇f!::Function; m::Int64 = 15, 
-        nmax::Int64 = 500, ϵ::Float64 = 1e-4, Bfgs = BFGS, verbose::Bool = false)
+        nmax::Int64 = 500, epsilon::Float64 = 1e-4, Bfgs = BFGS, verbose::Bool = false)
     grad = zeros(length(x_0))
     x = x_0
     ∇f!(x, grad)
@@ -64,7 +64,7 @@ function optimize(x_0::Vector, f::Function, ∇f!::Function; m::Int64 = 15,
     
     grad[:] = new_grad
     it = 1
-    while !Stop_optimize(f(x), grad, it)
+    while !Stop_optimize(f(x), grad, it, tol = epsilon)
         if verbose
             println(x)
         end
@@ -88,6 +88,6 @@ end
 function OPTIM_BFGS(f::Function, ∇f!::Function; x0::Vector, nmax::Int64 = 500, 
         ϵ::Float64 = 1e-4, verbose::Bool = false)
     
-    return optimize(x0, f, ∇f!, nmax = nmax, verbose = verbose)[1]
+    return optimize(x0, f, ∇f!, nmax = nmax, verbose = verbose, epsilon = ϵ)
     
 end

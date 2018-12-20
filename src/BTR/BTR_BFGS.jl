@@ -66,7 +66,7 @@ end
 
 
 function OPTIM_btr_BFGS(f::Function, g!::Function, x0::Vector; verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64)
-    H = BFGS(Array{Float64, 2}(I, length(x0), length(x0)))
+    H = BFGS_Matrix(Array{Float64, 2}(I, length(x0), length(x0)))
     state = BTRState(H)
     state.x = x0
     state.iter = 0

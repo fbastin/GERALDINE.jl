@@ -12,7 +12,7 @@ function btr(f::Function, g!::Function, H!, state::BTRState{Matrix};
         return dot(s, g)+0.5*dot(s, H*s)
     end
     
-    while !Stop_optimize(fx, state.g, state.iter, nmax = nmax)
+    while !Stop_optimize(fx, state.g, state.iter, nmax = nmax, tol = epsilon)
         accumulate!(accumulator)
         if verbose
             println(state)
@@ -36,14 +36,15 @@ function btr(f::Function, g!::Function, H!, state::BTRState{Matrix};
 end
 
 function OPTIM_btr_TH(f::Function, g!::Function, H!::Function, x0::Vector; verbose::Bool = true, nmax::Int64 = 1000, acc!::Function = (state, acc) -> nothing)
-    H = Array{Float64, 2}(I, length(x0), length(x0))
+    H = Array{Float64, 2}(I, length(x0), length(x0), ϵ::Float64 = 1e-4)
+    
     state = BTRState(H)
     state.x = x0
     state.iter = 0
     state.g = zeros(length(x0))
     
     state, accumulator =  btr(f, g!, H!, state, 
-        verbose = verbose, nmax = nmax, epsilon = epsilon, 
+        verbose = verbose, nmax = nmax, epsilon = ϵ, 
         acc!)
     return state, accumulator
 end
