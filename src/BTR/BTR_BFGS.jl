@@ -2,7 +2,7 @@ mutable struct BFGS_Matrix <: AbstractMatrix{Float64}
     H::Matrix
 end
 
-function btr(f::Function, g!::Function, state::BTRState{BFGS_Matrix}; 
+function btr(f::Function, g!::Function, state::BTRState{BFGS_Matrix}, x0::Vector; 
         verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64, 
         accumulate!::Function = (state, acc) -> nothing, accumulator = [])
     
