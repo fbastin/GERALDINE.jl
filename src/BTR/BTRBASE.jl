@@ -18,7 +18,7 @@ mutable struct BTRState{T} <: AbstractState where T
     step::Vector
     Δ::Float64
     ρ::Float64
-
+    fx::Float64
     function BTRState(H::T) where T
         state = new{T}()
         state.H = H
