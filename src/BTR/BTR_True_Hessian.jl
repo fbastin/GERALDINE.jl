@@ -40,7 +40,7 @@ function OPTIM_btr_TH(f::Function, g!::Function, H!::Function,
                 nmax::Int64 = 1000, epsilon::Float64 = 1e-4)
         
         
-    function accumulate!(state::BTRState{BFGS_Matrix}, acc::Vector)
+    function accumulate!(state::BTRState{Matrix}, acc::Vector)
         push!(acc, state.fx)
     end
     accumulator = []
