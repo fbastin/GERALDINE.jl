@@ -35,8 +35,11 @@ function btr(f::Function, g!::Function, H!::Function, state::BTRState{Array{Floa
     return state, accumulator
 end
 
-function OPTIM_btr_TH(f::Function, g!::Function, H!::Function, x0::Vector; verbose::Bool = true, 
-                nmax::Int64 = 1000, acc!::Function = (state, acc) -> nothing, epsilon::Float64 = 1e-4)
+function OPTIM_btr_TH(f::Function, g!::Function, H!::Function, 
+                x0::Vector; verbose::Bool = true, 
+                nmax::Int64 = 1000, epsilon::Float64 = 1e-4)
+        
+        
     function accumulate!(state::BTRState{BFGS_Matrix}, acc::Vector)
         push!(acc, state.fx)
     end
@@ -48,6 +51,7 @@ function OPTIM_btr_TH(f::Function, g!::Function, H!::Function, x0::Vector; verbo
     state.x = copy(x0)
     state.iter = 0
     state.g = zeros(length(x0))
+        
     
     state, accumulator = btr(f, g!, H!, state, x0, 
                 verbose = verbose, nmax = nmax, epsilon = epsilon, accumulate! = accumulate!, accumulator)
