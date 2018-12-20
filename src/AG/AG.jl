@@ -24,7 +24,7 @@ function AG(f::Function, ∇f!::Function,
 end
 
 function OPTIM_AGRESSIVE_AG(f::Function, ∇f!::Function; x0::Vector, L::Float64, nmax::Int64 = 500, 
-        ϵ::Float64 = 1e-4, verbose::Bool = false, acc!::Function = (sta, acc) -> nothing, acc = [])
+        epsilon::Float64 = 1e-4, verbose::Bool = false, acc!::Function = (sta, acc) -> nothing, acc = [])
     
     α = (k::Int64 -> 2/(k+1))
     β = (k::Int64 -> 1/(2*L))
@@ -33,7 +33,7 @@ function OPTIM_AGRESSIVE_AG(f::Function, ∇f!::Function; x0::Vector, L::Float64
     state = AGState(x0)
     
     state, acc = AG(f::Function, ∇f!::Function, α, β, γ, state;
-        nmax = nmax, epsilon = ϵ, verbose = verbose, acc! = acc!, acc = acc)
+        nmax = nmax, epsilon = epsilon, verbose = verbose, acc! = acc!, acc = acc)
     
     return state.x_md
 end
