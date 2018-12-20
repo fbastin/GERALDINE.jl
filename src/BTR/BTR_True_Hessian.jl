@@ -1,4 +1,4 @@
-function btr(f::Function, g!::Function, H!::Function, state::BTRState{Matrix}, x0::Vector; 
+function btr(f::Function, g!::Function, H!::Function, state::BTRState{Array{Float64,2}}, x0::Vector; 
         verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64 = 1e-6, 
         accumulate!::Function = (state, acc) -> nothing, accumulator = [])
     b = BTRDefaults()
@@ -12,7 +12,7 @@ function btr(f::Function, g!::Function, H!::Function, state::BTRState{Matrix}, x
         return dot(s, g)+0.5*dot(s, H*s)
     end
     
-    while !Stop_optimize(fx, state.g, state.iter, nmax = nmax, tol = epsilon)
+    while !Stop_optimize(state.fx, state.g, state.iter, nmax = nmax, tol = epsilon)
         accumulate!(accumulator)
         if verbose
             println(state)
