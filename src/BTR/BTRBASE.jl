@@ -9,23 +9,27 @@ function BTRDefaults()
     return BasicTrustRegion(0.01, 0.9, 0.5, 0.5)
 end
 
-mutable struct BTRState
+mutable struct BTRState{T} <: AbstractState where T
     iter::Int64
     x::Vector
     xcand::Vector
     g::Vector
+    H::T
     step::Vector
     Δ::Float64
     ρ::Float64
-    tol::Float64
 
-    function BTRState()
-        state = new()
-        state.tol = 1e-6
+    function BTRState(H::T) where T
+        state = new{T}()
+        state.H = H
         return state
     end
 end
 
+import Base.println
+function println(state::BTRState)
+    println(round(state.x, digits = 3))
+end
 function acceptCandidate!(state::BTRState, b::BasicTrustRegion)
     if state.ρ >= b.η1
         return true
@@ -57,9 +61,10 @@ end
 
 
 
-function TruncatedCG(state, H::Matrix)
+function TruncatedCG(state::BTRState)
+    H = state.H
     g = state.g
-    Δ = state.Δ
+    Δ = state.Δ*state.Δ
     n = length(g)
     s = zeros(n)
     normg0 = norm(g)
@@ -70,7 +75,6 @@ function TruncatedCG(state, H::Matrix)
     norm2s = 0
     sMd = 0
     k = 0
-    Δ = Δ*Δ
     while ! stopCG(norm(g), normg0, k, n)
         Hd = H*d
         κ = dot(d, Hd)

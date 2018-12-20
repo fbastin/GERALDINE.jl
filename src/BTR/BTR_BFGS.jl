@@ -1,13 +1,13 @@
-function btr_BFGS(f::Function, g!::Function, H!::Function, x0::Vector; 
-        state::BTRState = BTRState(), verbose::Bool = true, nmax::Int64 = 1000)
+mutable struct BFGS_Matrix <: AbstractMatrix{Float64}
+    H::Matrix
+end
+
+function btr(f::Function, g!::Function, state::BTRState{BFGS_Matrix}; 
+        verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64, 
+        accumulate!::Function = (state, acc) -> nothing, accumulator = [])
+    
     b = BTRDefaults()
-    state.iter = 0
-    state.x = x0
-    n = length(x0)
-    tol2 = state.tol*state.tol
-    state.g = zeros(n)
-    H = Array{Float64, 2}(I, n, n)
-    fx = f(x0)
+    state.fx = f(x0)
     g!(x0, state.g)
     state.Δ = 0.1*norm(state.g)
     y = zeros(n)
@@ -18,29 +18,28 @@ function btr_BFGS(f::Function, g!::Function, H!::Function, x0::Vector;
     end
     
     while !Stop_optimize(fx, state.g, state.iter, nmax = nmax)
-        
+        accumulate!(accumulator)
         if verbose
-            println(round.(state.x, digits = 3))
+            println(state)
         end
-        state.step = TruncatedCG(state, H)
+        state.step = TruncatedCG(state)
         state.xcand = state.x+state.step
         fcand = f(state.xcand)
         
-        state.ρ = -(fx-fcand)/(model(state.step, state.g, H))
+        state.ρ = -(fx-fcand)/(dot(state.step, state.g)+0.5*dot(state.step, state.H*state.step))
         
         g!(state.xcand, gcand)
         y = gcand - state.g
-        H = H!(H, y, state.step)
-        
+        BFGS!(state.H, y, state.step)
         if acceptCandidate!(state, b)
             state.x = copy(state.xcand)
             state.g = copy(gcand)
-            fx = fcand
+            state.fx = fcand
         end
         updateRadius!(state, b)
         state.iter += 1
     end
-    return state.x, state.iter
+    return state, accumulator
 end
 
 function BFGS!(H::Matrix, y::Vector, s::Vector)
@@ -48,7 +47,31 @@ function BFGS!(H::Matrix, y::Vector, s::Vector)
     H[:, :] += (y*y')/(y'*s) - (Bs*Bs')/(s'*Bs)
 end
 
-function OPTIM_btr_BFGS(f::Function, g!::Function, x0::Vector; verbose::Bool = true, nmax::Int64 = 1000)
-    x, it = btr_BFGS(f, g!, BFGS!, x0, verbose = verbose, nmax = nmax)
+
+
+import Base.size
+function size(a::BFGS_Matrix)
+    return size(a.a)
+end
+import Base.getindex
+function getindex(a::BFGS_Matrix, index...)
+    return getindex(a.a, index...)
+end
+import Base.setindex!
+function setindex!(a::BFGS_Matrix, value, index...)
+    setindex!(a.a, value, index...)
+end
+
+
+
+
+function OPTIM_btr_BFGS(f::Function, g!::Function, x0::Vector; verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64)
+    H = BFGS(Array{Float64, 2}(I, length(x0), length(x0)))
+    state = BTRState(H)
+    state.x = x0
+    state.iter = 0
+    state.g = zeros(length(x0))
+    state = btr(f, g!, state,
+        verbose = verbose, nmax = nmax, epsilon = epsilon)
     return x
 end

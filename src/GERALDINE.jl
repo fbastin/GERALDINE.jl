@@ -26,8 +26,9 @@ using LinearAlgebra, Statistics
 
 export OPTIM_AGRESSIVE_AG, OPTIM_BFGS, OPTIM_btr_TH, OPTIM_btr_BFGS, btr_BFGS, OPTIM_AGRESSIVE_RSAG, stop_stochastic_1
 
+include("State/main.jl")
 include("stop.jl")
-include("AG.jl")
+include("AG/main.jl")
 include("BFGS.jl")
 include("BTR/BTRBASE.jl")
 include("BTR/BTR_True_Hessian.jl")
