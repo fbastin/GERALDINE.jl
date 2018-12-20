@@ -51,15 +51,15 @@ end
 
 import Base.size
 function size(a::BFGS_Matrix)
-    return size(a.a)
+    return size(a.H)
 end
 import Base.getindex
 function getindex(a::BFGS_Matrix, index...)
-    return getindex(a.a, index...)
+    return getindex(a.H, index...)
 end
 import Base.setindex!
 function setindex!(a::BFGS_Matrix, value, index...)
-    setindex!(a.a, value, index...)
+    setindex!(a.H, value, index...)
 end
 
 
