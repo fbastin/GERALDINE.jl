@@ -4,7 +4,8 @@ end
 
 function btr(f::Function, g!::Function, state::BTRState{BFGS_Matrix}, x0::Vector; 
         verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64, 
-        accumulate!::Function = (state, acc) -> nothing, accumulator = [])
+        accumulate!::Function = (state::BTRState{BFGS_Matrix}, acc::T) -> nothing,
+        accumulator::T = []) where T
     n = length(x0)
     b = BTRDefaults()
     state.fx = f(x0)
