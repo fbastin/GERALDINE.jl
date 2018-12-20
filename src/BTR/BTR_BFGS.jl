@@ -71,7 +71,7 @@ function OPTIM_btr_BFGS(f::Function, g!::Function, x0::Vector; verbose::Bool = t
     state.x = x0
     state.iter = 0
     state.g = zeros(length(x0))
-    state = btr(f, g!, state,
+    state = btr(f, g!, state, x0,
         verbose = verbose, nmax = nmax, epsilon = epsilon)
     return x
 end
