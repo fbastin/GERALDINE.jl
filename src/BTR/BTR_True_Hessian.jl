@@ -1,4 +1,4 @@
-function btr(f::Function, g!::Function, H!, state::BTRState{Matrix}; 
+function btr(f::Function, g!::Function, H!::Function, state::BTRState{Matrix}; 
         verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64 = 1e-6, 
         accumulate!::Function = (state, acc) -> nothing, accumulator = [])
     b = BTRDefaults()
