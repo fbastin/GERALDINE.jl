@@ -13,7 +13,7 @@ function btr(f::Function, g!::Function, H!::Function, state::BTRState{Array{Floa
     end
     
     while !Stop_optimize(state.fx, state.g, state.iter, nmax = nmax, tol = epsilon)
-        accumulate!(accumulator)
+        accumulate!(state, accumulator)
         if verbose
             println(state)
         end
