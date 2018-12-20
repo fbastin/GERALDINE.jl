@@ -38,8 +38,9 @@ end
 function OPTIM_btr_TH(f::Function, g!::Function, H!::Function, x0::Vector; verbose::Bool = true, 
                 nmax::Int64 = 1000, acc!::Function = (state, acc) -> nothing, epsilon::Float64 = 1e-4)
         
-    
-    state = BTRState(Array{Float64, 2}(I, length(x0), length(x0)))
+    H = Array{Float64, 2}(I, length(x0), length(x0))
+    state = BTRState(H)
+    println(typeof(state))
     state.x = copy(x0)
     state.iter = 0
     state.g = zeros(length(x0))
