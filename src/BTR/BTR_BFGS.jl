@@ -42,8 +42,8 @@ function btr(f::Function, g!::Function, state::BTRState{BFGS_Matrix}, x0::Vector
     return state, accumulator
 end
 
-function BFGS!(H::Matrix, y::Vector, s::Vector)
-    Bs = H*s
+function BFGS!(bfgs::BFGS_Matrix{Matrix}, y::Vector, s::Vector)
+    Bs = bfgs.H*s
     H[:, :] += (y*y')/(y'*s) - (Bs*Bs')/(s'*Bs)
 end
 
