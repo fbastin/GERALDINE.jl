@@ -2,8 +2,8 @@ mutable struct BFGS_Matrix <: AbstractMatrix{Float64}
     H::Matrix
 end
 
-function btr(f::Function, g!::Function, state::BTRState{BFGS_Matrix}, x0::Vector; 
-        verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64 = 1e-4, 
+function btr(f::Function, g!::Function, state::BTRState{BFGS_Matrix}, x0::Vector;
+        verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64 = 1e-4,
         accumulate!::Function, accumulator::Array)
     n = length(x0)
     b = BTRDefaults()
@@ -12,11 +12,11 @@ function btr(f::Function, g!::Function, state::BTRState{BFGS_Matrix}, x0::Vector
     state.Δ = 0.1*norm(state.g)
     y = zeros(n)
     gcand = zeros(n)
-    
+
     function model(s::Vector, g::Vector, H::Matrix)
         return dot(s, g)+0.5*dot(s, H*s)
     end
-    
+
     while !Stop_optimize(state.fx, state.g, state.iter, nmax = nmax)
         accumulate!(state, accumulator)
         if verbose
@@ -25,9 +25,9 @@ function btr(f::Function, g!::Function, state::BTRState{BFGS_Matrix}, x0::Vector
         state.step = TruncatedCG(state)
         state.xcand = state.x+state.step
         fcand = f(state.xcand)
-        
+
         state.ρ = -(state.fx-fcand)/(dot(state.step, state.g)+0.5*dot(state.step, state.H*state.step))
-        
+
         g!(state.xcand, gcand)
         y = gcand - state.g
         BFGS!(state.H, y, state.step)
@@ -65,9 +65,9 @@ end
 
 
 
-function OPTIM_btr_BFGS(f::Function, g!::Function, x0::Vector; verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64)
+function OPTIM_btr_BFGS(f::Function, g!::Function, x0::Vector; verbose::Bool = true, nmax::Int64 = 1000, epsilon::Float64 = 1e-5)
     H = Array{Float64, 2}(I, length(x0), length(x0))
-    
+
     function accumulate!(state::BTRState{BFGS_Matrix}, acc::Vector)
         push!(acc, state.fx)
     end
